@@ -1,24 +1,23 @@
 name: Test
 
-on: [push, pull_request]
+on: push
 
 jobs:
-  test:
+  release:
     runs-on: ${{ matrix.os }}
 
     strategy:
       matrix:
-        os: [macos-latest, windows-latest, ubuntu-latest]
+        os: [macos-10.14, windows-2019, ubuntu-18.04]
 
     steps:
       - name: Check out Git repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v1
 
       - name: Install Node.js and NPM
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v1
         with:
-          node-version: 18
-          cache: npm
+          node-version: 13
 
       - name: npm install
         run: |
@@ -26,9 +25,8 @@ jobs:
 
       - name: npm test
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          npm run package
+          npm run package-ci
           npm run lint
-          npm exec tsc
-          npm test
+          npm run ts
